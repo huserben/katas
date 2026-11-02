@@ -6,9 +6,9 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit",
+    "build": "tsc --noEmit",
     "lint": "biome check .",
-    "check": "pnpm typecheck && pnpm lint && pnpm test"
+    "check": "pnpm build && pnpm lint && pnpm test"
   },
   "packageManager": "pnpm@12.11.2",
   "devDependencies": {

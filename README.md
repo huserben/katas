@@ -19,12 +19,12 @@ pnpm test:watch
 |---|---|
 | `pnpm test` | run tests once |
 | `pnpm test:watch` | watch mode |
-| `pnpm typecheck` | `tsc --noEmit` |
+| `pnpm build` | `tsc --noEmit` (type check, no output) |
 | `pnpm lint` | Biome check |
-| `pnpm check` | typecheck, lint, test |
+| `pnpm check` | build, lint, test |
 
 ## Conventions
 
 - Test next to the code in `src/`, named `*.test.ts`.
 - Small commits: red, green, refactor.
-- Typecheck with every green.
+- Run `pnpm build` with every green.
