@@ -10,6 +10,7 @@ if (path === undefined) {
 
 try {
   const service = new TimeTrackingService();
+
   const activities = service.parseActivities(readFileSync(path, "utf8"));
 
   for (const entry of service.generateSummary(activities)) {
