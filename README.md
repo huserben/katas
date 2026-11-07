@@ -17,7 +17,7 @@ pnpm test:watch
 
 | Script | What |
 |---|---|
-| `pnpm start` | run `src/main.ts` (args + stdin in, stdout out) |
+| `pnpm start` | run `src/main.ts` |
 | `pnpm test` | run tests once |
 | `pnpm test:watch` | watch mode |
 | `pnpm build` | `tsc --noEmit` (type check, no output) |
@@ -27,6 +27,6 @@ pnpm test:watch
 ## Conventions
 
 - Test next to the code in `src/`, named `*.test.ts`.
-- Console apps: logic in pure functions (`app.ts`), I/O only in `main.ts`. Unit-test the core; keep a few end-to-end tests in `main.test.ts`.
+- Console apps: `src/main.ts` is the entry point. Put logic in classes or modules next to it and unit-test those, not `main.ts`.
 - Small commits: red, green, refactor.
 - Run `pnpm build` with every green.

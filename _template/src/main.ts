@@ -1,6 +1,11 @@
-// Thin I/O shell: read args + stdin, call the core, write stdout. No logic here.
-import { text } from "node:stream/consumers";
-import { run } from "./app.ts";
+import { createInterface } from "node:readline/promises";
 
-const stdin = process.stdin.isTTY ? "" : await text(process.stdin);
-process.stdout.write(`${run(stdin, process.argv.slice(2))}\n`);
+const readline = createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+process.stdout.write("Hello world\n");
+const line = await readline.question("> ");
+process.stdout.write(`${line}\n`);
+readline.close();
