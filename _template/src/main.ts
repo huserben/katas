@@ -1,11 +1,5 @@
-import { createInterface } from "node:readline/promises";
-
-const readline = createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+import { text } from "node:stream/consumers";
 
 process.stdout.write("Hello world\n");
-const line = await readline.question("> ");
-process.stdout.write(`${line}\n`);
-readline.close();
+const input = await text(process.stdin);
+process.stdout.write(input);
