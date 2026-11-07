@@ -1,5 +1,11 @@
-import { text } from "node:stream/consumers";
-
 process.stdout.write("Hello world\n");
-const input = await text(process.stdin);
-process.stdout.write(input);
+
+for await (const chunk of process.stdin) {
+  const line = String(chunk).trim();
+
+  if (line === "exit") {
+    break;
+  }
+
+  process.stdout.write(`${line}\n`);
+}
