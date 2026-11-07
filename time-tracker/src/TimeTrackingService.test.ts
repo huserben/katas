@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { TimeTrackingService } from "./TimeTrackingService.ts";
 
@@ -11,6 +12,19 @@ describe("TimeTrackingService Acceptance Tests", () => {
 13:00 coding
 17:00 end`;
     const activities = timeTrackingService.parseActivities(rawInput);
+
+    expect(timeTrackingService.generateSummary(activities)).toEqual([
+      { activity: "standup", durationInMin: 15 },
+      { activity: "coding", durationInMin: 405 },
+      { activity: "lunch", durationInMin: 60 },
+    ]);
+  });
+
+  it("returns summay for a real file", () => {
+    const timeTrackingService = new TimeTrackingService();
+
+    const content = readFileSync("day.txt", "utf8");
+    const activities = timeTrackingService.parseActivities(content);
 
     expect(timeTrackingService.generateSummary(activities)).toEqual([
       { activity: "standup", durationInMin: 15 },
@@ -49,6 +63,24 @@ describe("TimeTrackingService Unit Tests", () => {
   });
 
   it("parses multiple activities correctly", () => {
+    const timeTrackingService = new TimeTrackingService();
+    const input = `09:00 standup
+09:15 coding
+12:00 lunch
+12:05 end
+`;
+
+    const activities = timeTrackingService.parseActivities(input);
+
+    expect(activities).toEqual([
+      { type: "standup", start: 540 },
+      { type: "coding", start: 555 },
+      { type: "lunch", start: 720 },
+      { type: "end", start: 725 },
+    ]);
+  });
+
+  it("skips new lines", () => {
     const timeTrackingService = new TimeTrackingService();
     const input = `09:00 standup
 09:15 coding

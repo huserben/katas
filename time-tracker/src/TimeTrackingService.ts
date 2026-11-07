@@ -23,6 +23,10 @@ export class TimeTrackingService {
     const activities: Activity[] = [];
 
     for (const line of input.split("\n")) {
+      if (line.trim() === "") {
+        continue;
+      }
+
       const activityResult = this.parseActivity(line);
 
       if (!activityResult.ok) {
