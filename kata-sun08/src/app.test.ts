@@ -28,7 +28,7 @@ describe("Acceptance Tests", () => {
     expect(total).toBe(1.6);
   });
 
-  it.skip("Ignores an unknown Item in the sale", () => {
+  it("Ignores an unknown Item in the sale", () => {
     const posService = new PointOfSaleService(new TestPriceList());
 
     posService.scan("APPLE");

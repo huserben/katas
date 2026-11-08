@@ -18,11 +18,16 @@ export class PointOfSaleService {
 
   public scan(productCode: string): ScanResult {
     const currentPrices = this.priceList.getPriceList();
-    if (!currentPrices.has(productCode)) {
-      return { ok: false, reason: "Item not found" };
+    const caseIndependentProductCode = productCode.toUpperCase();
+
+    if (!currentPrices.has(caseIndependentProductCode)) {
+      return {
+        ok: false,
+        reason: `Item ${productCode} is not in Pricing List`,
+      };
     }
 
-    const itemPrice = currentPrices.get(productCode);
+    const itemPrice = currentPrices.get(caseIndependentProductCode);
 
     if (itemPrice === undefined) {
       return {

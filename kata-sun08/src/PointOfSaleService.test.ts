@@ -50,4 +50,27 @@ describe("Point of Sale Service", () => {
       expect(total).toBe(expectedTotal);
     },
   );
+
+  it("returns the right reason if it can't read a product code", () => {
+    const posService = new PointOfSaleService(new TestPriceList());
+
+    const scanResult = posService.scan("GUM");
+
+    expect(scanResult).toEqual({
+      ok: false,
+      reason: "Item GUM is not in Pricing List",
+    });
+  });
+
+  it.each([
+    { product: "Apple", price: 0.5 },
+    { product: "apple", price: 0.5 },
+    { product: "ApPlE", price: 0.5 },
+  ])("ignores casing for getting prices", ({ product, price }) => {
+    const posService = new PointOfSaleService(new TestPriceList());
+
+    const scanResult = posService.scan(product);
+
+    expect(scanResult).toEqual({ ok: true, itemPrice: price });
+  });
 });
