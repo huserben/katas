@@ -10,24 +10,32 @@ export type ScanResult =
 export class PointOfSaleService {
   private priceList: PriceList;
 
+  private totalCost: number = 0;
+
   constructor(priceList: PriceList) {
     this.priceList = priceList;
   }
 
   public scan(productCode: string): ScanResult {
     const currentPrices = this.priceList.getPriceList();
-    if (currentPrices.has(productCode)) {
-      const itemPrice = currentPrices.get(productCode);
-
-      if (itemPrice) {
-        return { ok: true, itemPrice: itemPrice };
-      }
+    if (!currentPrices.has(productCode)) {
+      return { ok: false, reason: "Item not found" };
     }
 
-    return { ok: false, reason: "Item not found" };
+    const itemPrice = currentPrices.get(productCode);
+
+    if (itemPrice === undefined) {
+      return {
+        ok: false,
+        reason: "Item Price could not be read from Price List",
+      };
+    }
+
+    this.totalCost += itemPrice;
+    return { ok: true, itemPrice: itemPrice };
   }
 
   public total(): number {
-    return 0;
+    return this.totalCost;
   }
 }
