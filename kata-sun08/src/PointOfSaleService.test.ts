@@ -73,4 +73,16 @@ describe("Point of Sale Service", () => {
 
     expect(scanResult).toEqual({ ok: true, itemPrice: price });
   });
+
+  it("handles offers according to price list", () => {
+    const posService = new PointOfSaleService(new TestPriceList());
+
+    posService.scan("APPLE");
+    posService.scan("APPLE");
+    posService.scan("APPLE");
+
+    const total = posService.total();
+
+    expect(total).toBe(1.3);
+  });
 });

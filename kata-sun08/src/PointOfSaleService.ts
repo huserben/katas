@@ -1,4 +1,4 @@
-import type { PriceList } from "./PriceList.ts";
+import type { PriceList, SpecialOffer } from "./PriceList.ts";
 
 export type ScanResult =
   | {
@@ -10,37 +10,94 @@ export type ScanResult =
 export class PointOfSaleService {
   private priceList: PriceList;
 
-  private totalCost: number = 0;
+  private basket: Record<string, number> = {};
 
   constructor(priceList: PriceList) {
     this.priceList = priceList;
   }
 
+  private getPriceForItem(product: string): number {
+    const prices = this.priceList.getPriceList();
+
+    if (!prices.has(product)) {
+      return -1;
+    }
+
+    const price = prices.get(product);
+
+    return price ?? -1;
+  }
+
+  private addItemToBasket(product: string) {
+    const currentCount = this.basket[product] ?? 0;
+
+    this.basket[product] = currentCount + 1;
+  }
+
+  private getSpecialOffer(product: string): SpecialOffer | undefined {
+    const specialOffers = this.priceList.getSpecialOffers();
+
+    for (const specialOffer of specialOffers) {
+      if (specialOffer.product === product) {
+        return specialOffer;
+      }
+    }
+
+    return undefined;
+  }
+
+  private handleSpecialOffer(
+    offer: SpecialOffer,
+    boughtAmount: number,
+  ): { remainingAmount: number; price: number } {
+    let remainingAmount = boughtAmount;
+    let price = 0;
+
+    while (remainingAmount >= offer.amount) {
+      remainingAmount -= offer.amount;
+      price += offer.price;
+    }
+
+    return { remainingAmount: remainingAmount, price: price };
+  }
+
   public scan(productCode: string): ScanResult {
-    const currentPrices = this.priceList.getPriceList();
     const caseIndependentProductCode = productCode.toUpperCase();
 
-    if (!currentPrices.has(caseIndependentProductCode)) {
+    const price = this.getPriceForItem(caseIndependentProductCode);
+
+    if (price < 0) {
       return {
         ok: false,
         reason: `Item ${productCode} is not in Pricing List`,
       };
     }
 
-    const itemPrice = currentPrices.get(caseIndependentProductCode);
-
-    if (itemPrice === undefined) {
-      return {
-        ok: false,
-        reason: "Item Price could not be read from Price List",
-      };
-    }
-
-    this.totalCost += itemPrice;
-    return { ok: true, itemPrice: itemPrice };
+    this.addItemToBasket(caseIndependentProductCode);
+    return { ok: true, itemPrice: price };
   }
 
   public total(): number {
-    return this.totalCost;
+    let total = 0;
+
+    for (const item of Object.keys(this.basket)) {
+      const itemPrice = this.getPriceForItem(item);
+      let amount = this.basket[item] ?? 0;
+
+      const specialOffer = this.getSpecialOffer(item);
+      if (specialOffer) {
+        const { remainingAmount, price } = this.handleSpecialOffer(
+          specialOffer,
+          amount,
+        );
+
+        amount = remainingAmount;
+        total += price;
+      }
+
+      total += amount * itemPrice;
+    }
+
+    return total;
   }
 }

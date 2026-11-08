@@ -15,7 +15,7 @@ describe("Acceptance Tests", () => {
     expect(total).toBe(4.2);
   });
 
-  it.skip("Totals an offering with special Pricing correctly", () => {
+  it("Totals an offering with special Pricing correctly", () => {
     const posService = new PointOfSaleService(new TestPriceList());
 
     posService.scan("APPLE");

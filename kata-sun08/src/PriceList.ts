@@ -1,6 +1,13 @@
 export interface PriceList {
   getPriceList(): Map<string, number>;
+  getSpecialOffers(): SpecialOffer[];
 }
+
+export type SpecialOffer = {
+  product: string;
+  amount: number;
+  price: number;
+};
 
 export class TestPriceList implements PriceList {
   private priceList: Map<string, number> = new Map();
@@ -14,5 +21,16 @@ export class TestPriceList implements PriceList {
 
   public getPriceList(): Map<string, number> {
     return this.priceList;
+  }
+
+  public getSpecialOffers(): SpecialOffer[] {
+    return [
+      {
+        product: "APPLE",
+        amount: 3,
+        price: 1.3,
+      },
+      { product: "BANANA", amount: 2, price: 0.45 },
+    ];
   }
 }
