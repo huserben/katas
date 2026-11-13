@@ -1,0 +1,5 @@
+09:00 standup
+09:15 coding
+12:00 lunch
+13:00 coding
+17:00 end
